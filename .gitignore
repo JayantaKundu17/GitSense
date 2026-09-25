@@ -1,0 +1,26 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# RAG
+rag_indexes/
+
+# Node
+node_modules/
+dist/
+
+# Cloudflare / deployment
+.wrangler/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
