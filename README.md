@@ -2,9 +2,8 @@
 
 > AI-powered GitHub repository intelligence and codebase analysis platform.
 
-## 🚀 Live Demo
+## 🚀 Demo :[https://gitsense.pages.dev](https://gitsense.pages.dev)
 
-### [https://gitsense.pages.dev](https://gitsense.pages.dev)
 
 **GitHub Repository:** [github.com/JayantaKundu17/GitSense](https://github.com/JayantaKundu17/GitSense)
 
@@ -452,16 +451,3 @@ Computer Science & Engineering
 
 ---
 
-## ⭐ Support
-
-If you find GitSense useful, consider giving the repository a ⭐.
-
-[🌐 Try GitSense](https://gitsense.pages.dev)
-[⭐ Star GitSense](https://github.com/JayantaKundu17/GitSense)
-
-```
-
-After saving, GitHub should render it normally with **headings, bullets, tables, links, and diagrams**, rather than showing the Markdown as text.
-
-Also, **you don't need to include the old "Absolutely. Here is..." sentence** — that was my message to you, not part of the README.
-```
