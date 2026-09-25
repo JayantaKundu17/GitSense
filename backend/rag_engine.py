@@ -1,33 +1,34 @@
 """
-GitSense local RAG engine.
+GitSense lightweight local RAG engine.
 
 Uses:
-- GitHub codeload ZIP to fetch a public repository in one download
-- Sentence Transformers for local embeddings
-- NumPy for persistent vector storage + cosine similarity
+- GitHub codeload ZIP to fetch a public repository
+- Local source-code chunking
+- Lightweight lexical relevance scoring
+- JSON persistence
 
-No paid embedding API is required.
+No embedding API or ML model is required.
 """
 
 from __future__ import annotations
 
 import io
 import json
+import math
 import re
 import shutil
 import zipfile
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import requests
-from sentence_transformers import SentenceTransformer
 
 
-MODEL_NAME = "all-MiniLM-L6-v2"
 INDEX_ROOT = Path(__file__).resolve().parent / "rag_indexes"
+
 CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 200
+
 MAX_FILE_BYTES = 300_000
 MAX_REPO_DOWNLOAD_BYTES = 60 * 1024 * 1024
 
@@ -44,9 +45,16 @@ TEXT_EXTENSIONS = {
 }
 
 SKIP_PARTS = {
-    ".git", "node_modules", "venv", ".venv",
-    "__pycache__", "dist", "build",
-    ".next", ".vite", "target",
+    ".git",
+    "node_modules",
+    "venv",
+    ".venv",
+    "__pycache__",
+    "dist",
+    "build",
+    ".next",
+    ".vite",
+    "target",
 }
 
 SKIP_EXTENSIONS = {
@@ -56,18 +64,6 @@ SKIP_EXTENSIONS = {
     ".mp3", ".wav", ".mp4", ".mov",
     ".exe", ".dll", ".so", ".dylib",
 }
-
-
-_model: SentenceTransformer | None = None
-
-
-def get_embedding_model() -> SentenceTransformer:
-    global _model
-
-    if _model is None:
-        _model = SentenceTransformer(MODEL_NAME)
-
-    return _model
 
 
 def _safe_repo_key(owner: str, repo: str, version: str) -> str:
@@ -93,17 +89,22 @@ def _is_text_file(path: str) -> bool:
 def _decode_bytes(data: bytes, path: str) -> str:
     if path.lower().endswith(".ipynb"):
         try:
-            notebook = json.loads(data.decode("utf-8", errors="ignore"))
+            notebook = json.loads(
+                data.decode("utf-8", errors="ignore")
+            )
+
             pieces = []
 
             for cell in notebook.get("cells", []):
                 source = cell.get("source", [])
+
                 if isinstance(source, list):
                     pieces.extend(source)
                 elif isinstance(source, str):
                     pieces.append(source)
 
             return "\n".join(pieces)
+
         except Exception:
             return ""
 
@@ -116,11 +117,11 @@ def _chunk_text(text: str, path: str) -> list[dict[str, Any]]:
     if not lines:
         return []
 
-    chunks: list[dict[str, Any]] = []
+    chunks = []
     start = 0
 
     while start < len(lines):
-        current: list[str] = []
+        current = []
         current_chars = 0
         end = start
 
@@ -137,12 +138,14 @@ def _chunk_text(text: str, path: str) -> list[dict[str, Any]]:
         chunk_text = "\n".join(current).strip()
 
         if chunk_text:
-            chunks.append({
-                "path": path,
-                "start_line": start + 1,
-                "end_line": end,
-                "text": chunk_text,
-            })
+            chunks.append(
+                {
+                    "path": path,
+                    "start_line": start + 1,
+                    "end_line": end,
+                    "text": chunk_text,
+                }
+            )
 
         if end >= len(lines):
             break
@@ -164,6 +167,7 @@ def _download_repository_zip(
     repo: str,
     branch: str,
 ) -> bytes:
+
     url = (
         f"https://codeload.github.com/"
         f"{owner}/{repo}/zip/refs/heads/{branch}"
@@ -182,10 +186,12 @@ def _download_repository_zip(
             f"(HTTP {response.status_code})."
         )
 
-    chunks: list[bytes] = []
+    chunks = []
     total = 0
 
-    for piece in response.iter_content(chunk_size=1024 * 1024):
+    for piece in response.iter_content(
+        chunk_size=1024 * 1024
+    ):
         if not piece:
             continue
 
@@ -209,16 +215,22 @@ def _build_index(
     version: str,
     index_dir: Path,
 ) -> dict[str, Any]:
-    archive = _download_repository_zip(owner, repo, branch)
 
-    chunks: list[dict[str, Any]] = []
+    archive = _download_repository_zip(
+        owner,
+        repo,
+        branch,
+    )
+
+    chunks = []
 
     with zipfile.ZipFile(io.BytesIO(archive)) as zf:
+
         for member in zf.infolist():
+
             if member.is_dir():
                 continue
 
-            # The ZIP normally contains owner-repo-branch/... .
             relative_parts = Path(member.filename).parts
 
             if len(relative_parts) < 2:
@@ -242,71 +254,81 @@ def _build_index(
             if not text.strip():
                 continue
 
-            chunks.extend(_chunk_text(text, path))
+            chunks.extend(
+                _chunk_text(text, path)
+            )
 
     if not chunks:
         raise RuntimeError(
-            "No indexable source files were found in the repository."
+            "No indexable source files were found "
+            "in the repository."
         )
 
-    model = get_embedding_model()
+    index_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
-    texts = [
-        f"FILE: {item['path']}\n{item['text']}"
-        for item in chunks
-    ]
-
-    embeddings = model.encode(
-        texts,
-        batch_size=32,
-        show_progress_bar=False,
-        convert_to_numpy=True,
-        normalize_embeddings=True,
-    ).astype("float32")
-
-    index_dir.mkdir(parents=True, exist_ok=True)
-
-    np.save(index_dir / "embeddings.npy", embeddings)
-
-    with open(index_dir / "chunks.json", "w", encoding="utf-8") as f:
-        json.dump(chunks, f, ensure_ascii=False)
+    with open(
+        index_dir / "chunks.json",
+        "w",
+        encoding="utf-8",
+    ) as f:
+        json.dump(
+            chunks,
+            f,
+            ensure_ascii=False,
+        )
 
     metadata = {
         "owner": owner,
         "repo": repo,
         "branch": branch,
         "version": version,
-        "model": MODEL_NAME,
+        "method": "lightweight-lexical-rag",
         "chunk_count": len(chunks),
     }
 
-    with open(index_dir / "metadata.json", "w", encoding="utf-8") as f:
-        json.dump(metadata, f, indent=2)
+    with open(
+        index_dir / "metadata.json",
+        "w",
+        encoding="utf-8",
+    ) as f:
+        json.dump(
+            metadata,
+            f,
+            indent=2,
+        )
 
     return metadata
 
 
 def _load_index(index_dir: Path):
-    embeddings_path = index_dir / "embeddings.npy"
+
     chunks_path = index_dir / "chunks.json"
     metadata_path = index_dir / "metadata.json"
 
     if not (
-        embeddings_path.exists()
-        and chunks_path.exists()
+        chunks_path.exists()
         and metadata_path.exists()
     ):
         return None
 
-    embeddings = np.load(embeddings_path)
-
-    with open(chunks_path, "r", encoding="utf-8") as f:
+    with open(
+        chunks_path,
+        "r",
+        encoding="utf-8",
+    ) as f:
         chunks = json.load(f)
 
-    with open(metadata_path, "r", encoding="utf-8") as f:
+    with open(
+        metadata_path,
+        "r",
+        encoding="utf-8",
+    ) as f:
         metadata = json.load(f)
 
-    return embeddings, chunks, metadata
+    return chunks, metadata
 
 
 def get_or_build_index(
@@ -315,9 +337,18 @@ def get_or_build_index(
     branch: str,
     version: str,
 ):
-    INDEX_ROOT.mkdir(parents=True, exist_ok=True)
 
-    key = _safe_repo_key(owner, repo, version)
+    INDEX_ROOT.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    key = _safe_repo_key(
+        owner,
+        repo,
+        version,
+    )
+
     index_dir = INDEX_ROOT / key
 
     loaded = _load_index(index_dir)
@@ -325,11 +356,18 @@ def get_or_build_index(
     if loaded is not None:
         return loaded
 
-    # Keep the local folder from accumulating obsolete versions.
     prefix = f"{owner}__{repo}__"
+
     for old_dir in INDEX_ROOT.iterdir():
-        if old_dir.name.startswith(prefix) and old_dir != index_dir:
-            shutil.rmtree(old_dir, ignore_errors=True)
+
+        if (
+            old_dir.name.startswith(prefix)
+            and old_dir != index_dir
+        ):
+            shutil.rmtree(
+                old_dir,
+                ignore_errors=True,
+            )
 
     metadata = _build_index(
         owner,
@@ -340,9 +378,10 @@ def get_or_build_index(
     )
 
     return (
-        np.load(index_dir / "embeddings.npy"),
         json.loads(
-            (index_dir / "chunks.json").read_text(
+            (
+                index_dir / "chunks.json"
+            ).read_text(
                 encoding="utf-8"
             )
         ),
@@ -350,33 +389,123 @@ def get_or_build_index(
     )
 
 
+def _tokenize(text: str) -> list[str]:
+    return re.findall(
+        r"[A-Za-z0-9_]+",
+        text.lower(),
+    )
+
+
+def _score_chunk(
+    question_tokens: list[str],
+    chunk: dict[str, Any],
+) -> float:
+
+    path = chunk.get("path", "")
+    text = chunk.get("text", "")
+
+    path_tokens = set(
+        _tokenize(path)
+    )
+
+    text_tokens = _tokenize(text)
+
+    if not text_tokens:
+        return 0.0
+
+    text_counts = {}
+
+    for token in text_tokens:
+        text_counts[token] = (
+            text_counts.get(token, 0) + 1
+        )
+
+    score = 0.0
+
+    for token in question_tokens:
+
+        count = text_counts.get(
+            token,
+            0,
+        )
+
+        if count:
+            score += 1.0 + math.log1p(count)
+
+        if token in path_tokens:
+            score += 3.0
+
+    # Give a small bonus to chunks that contain
+    # multiple distinct query terms.
+    distinct_matches = sum(
+        1
+        for token in set(question_tokens)
+        if token in text_counts
+        or token in path_tokens
+    )
+
+    score += distinct_matches * 0.5
+
+    return score
+
+
 def search_index(
-    embeddings: np.ndarray,
     chunks: list[dict[str, Any]],
     question: str,
     top_k: int = 6,
 ):
-    model = get_embedding_model()
 
-    query_embedding = model.encode(
-        [question],
-        convert_to_numpy=True,
-        normalize_embeddings=True,
-    )[0].astype("float32")
+    question_tokens = _tokenize(question)
 
-    scores = embeddings @ query_embedding
+    if not question_tokens:
+        return chunks[:top_k]
 
-    top_indices = np.argsort(scores)[::-1][:top_k]
+    scored = []
+
+    for chunk in chunks:
+
+        score = _score_chunk(
+            question_tokens,
+            chunk,
+        )
+
+        if score > 0:
+            scored.append(
+                (
+                    score,
+                    chunk,
+                )
+            )
+
+    scored.sort(
+        key=lambda item: item[0],
+        reverse=True,
+    )
 
     results = []
 
-    for index in top_indices:
-        score = float(scores[index])
+    for score, chunk in scored[:top_k]:
 
-        results.append({
-            **chunks[int(index)],
-            "score": round(score, 4),
-        })
+        results.append(
+            {
+                **chunk,
+                "score": round(
+                    float(score),
+                    4,
+                ),
+            }
+        )
+
+    # If no query terms matched, provide a few
+    # source chunks rather than returning nothing.
+    if not results:
+        results = [
+            {
+                **chunk,
+                "score": 0.0,
+            }
+            for chunk in chunks[:top_k]
+        ]
 
     return results
 
@@ -389,7 +518,8 @@ def retrieve(
     question: str,
     top_k: int = 6,
 ):
-    embeddings, chunks, metadata = get_or_build_index(
+
+    chunks, metadata = get_or_build_index(
         owner,
         repo,
         branch,
@@ -397,7 +527,6 @@ def retrieve(
     )
 
     results = search_index(
-        embeddings,
         chunks,
         question,
         top_k=top_k,
