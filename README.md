@@ -1,13 +1,10 @@
-Absolutely. Here is a polished, **copy-paste-ready `README.md`** for GitHub, with the demo prominently at the top.
-
-````markdown
 # GitSense
 
 > AI-powered GitHub repository intelligence and codebase analysis platform.
 
 ## 🚀 Live Demo
 
-### [🌐 Try GitSense Live](https://gitsense.pages.dev)
+### [https://gitsense.pages.dev](https://gitsense.pages.dev)
 
 **GitHub Repository:** [github.com/JayantaKundu17/GitSense](https://github.com/JayantaKundu17/GitSense)
 
@@ -63,37 +60,26 @@ The AI analysis includes:
 6. Key Observations
 7. Executive Summary
 
-The AI is instructed to base its analysis on the repository data provided to it rather than inventing project details.
-
 ### 💬 Repository AI Chat
 
 Ask questions directly about a repository.
 
 Examples:
 
-```text
-What are the most important files in this repository?
-
-What dependencies does this project use and why?
-
-Explain the architecture of this project.
-
-How does the backend work?
-
-Where is the main entry point?
-
-Which files are responsible for database operations?
-````
+- What are the most important files in this repository?
+- What dependencies does this project use and why?
+- Explain the architecture of this project.
+- How does the backend work?
+- Where is the main entry point?
+- Which files are responsible for database operations?
 
 GitSense retrieves relevant repository code before generating the answer.
 
 ### 🔎 RAG-Based Code Retrieval
 
-GitSense implements a lightweight local retrieval system for repository chat.
+GitSense implements lightweight local retrieval for repository chat.
 
-The pipeline is:
 
-```text
 GitHub Repository
        ↓
 Repository Download
@@ -109,13 +95,10 @@ Relevant Code Context
 Gemini
        ↓
 AI Answer
-```
-
-The retrieval system avoids requiring a paid embedding API.
 
 ### 🧑‍💻 Technology Detection
 
-GitSense detects technologies and dependencies used by a repository, including common ecosystems such as:
+GitSense detects technologies and dependencies used by a repository, including:
 
 * Python
 * JavaScript
@@ -149,7 +132,7 @@ GitSense analyzes source files and calculates:
 
 ### 🌳 Repository Structure
 
-Explore the repository's:
+Explore:
 
 * Files
 * Directories
@@ -158,7 +141,7 @@ Explore the repository's:
 
 ### 📅 Development Activity
 
-Analyze recent repository activity including:
+Analyze:
 
 * Recent commits
 * Contributors
@@ -167,7 +150,7 @@ Analyze recent repository activity including:
 
 ### ❤️ Repository Health
 
-GitSense combines repository metrics into a high-level health analysis based on factors such as:
+GitSense combines repository metrics into a high-level health analysis based on:
 
 * Project size
 * Development activity
@@ -182,20 +165,20 @@ GitSense combines repository metrics into a high-level health analysis based on 
 
 ```text
                          ┌──────────────────────┐
-                         │       User           │
+                         │        User          │
                          └──────────┬───────────┘
                                     │
                                     ▼
                          ┌──────────────────────┐
                          │   GitSense Frontend  │
-                         │   React + Vite       │
+                         │     React + Vite     │
                          └──────────┬───────────┘
                                     │
                                     │ REST API
                                     ▼
                          ┌──────────────────────┐
                          │   FastAPI Backend    │
-                         │      Python          │
+                         │        Python        │
                          └───────┬───────┬──────┘
                                  │       │
                     ┌────────────┘       └─────────────┐
@@ -207,50 +190,10 @@ GitSense combines repository metrics into a high-level health analysis based on 
                     └────────────┬─────────────────────┘
                                  ▼
                          ┌──────────────────────┐
-                         │  Repository Analysis │
-                         │       + RAG           │
+                         │ Repository Analysis  │
+                         │        + RAG         │
                          └──────────────────────┘
 ```
-
----
-
-## ☁️ Production Deployment
-
-GitSense is deployed using a separate frontend and backend architecture.
-
-```text
-GitHub
-   │
-   ├── frontend/
-   │       │
-   │       ▼
-   │   Cloudflare Pages
-   │       │
-   │       ▼
-   │   gitsense.pages.dev
-   │
-   └── backend/
-           │
-           ▼
-       Render
-           │
-           ▼
-   FastAPI Application
-```
-
-### Frontend
-
-**Platform:** Cloudflare Pages
-
-**Framework:** React + Vite
-
-### Backend
-
-**Platform:** Render
-
-**Framework:** FastAPI
-
-**Server:** Uvicorn
 
 ---
 
@@ -326,26 +269,6 @@ GitSense/
 
 ---
 
-## 🔌 API Endpoints
-
-The FastAPI backend provides endpoints for different repository analysis operations.
-
-| Endpoint                           | Purpose                      |
-| ---------------------------------- | ---------------------------- |
-| `GET /`                            | Basic backend status         |
-| `GET /health`                      | Health check                 |
-| `GET /api/repository`              | Repository metadata          |
-| `GET /api/repository/tree`         | Repository structure         |
-| `GET /api/repository/stats`        | Code statistics              |
-| `GET /api/repository/dependencies` | Dependency analysis          |
-| `GET /api/repository/activity`     | Development activity         |
-| `GET /api/repository/health`       | Repository health            |
-| `GET /api/repository/advanced`     | Advanced repository analysis |
-| `GET /api/repository/ai-summary`   | Gemini AI summary            |
-| `POST /api/repository/chat`        | AI repository chat           |
-
----
-
 ## 🚀 Run Locally
 
 ### 1. Clone the repository
@@ -355,41 +278,14 @@ git clone https://github.com/JayantaKundu17/GitSense.git
 cd GitSense
 ```
 
----
-
 ### 2. Backend Setup
 
 ```bash
 cd backend
-```
-
-Create a virtual environment:
-
-```bash
 python3 -m venv .venv
-```
-
-Activate it:
-
-#### macOS / Linux
-
-```bash
 source .venv/bin/activate
-```
-
-#### Windows
-
-```bash
-.venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
 ```
-
----
 
 ### 3. Configure Environment Variables
 
@@ -406,13 +302,7 @@ GEMINI_API_KEY=your_gemini_api_key
 GITHUB_TOKEN=your_github_token
 ```
 
-The GitHub token is used for GitHub API access and should never be exposed in the frontend.
-
----
-
 ### 4. Start the Backend
-
-From the `backend` directory:
 
 ```bash
 uvicorn main:app --reload --port 8000
@@ -430,19 +320,12 @@ API documentation:
 http://127.0.0.1:8000/docs
 ```
 
----
-
 ### 5. Frontend Setup
 
 Open another terminal:
 
 ```bash
 cd frontend
-```
-
-Install dependencies:
-
-```bash
 npm install
 ```
 
@@ -472,113 +355,75 @@ http://localhost:5173
 
 ---
 
-## 🔑 Environment Variables
+## 🔌 API Endpoints
 
-### Backend
-
-| Variable         | Description                  |
-| ---------------- | ---------------------------- |
-| `GEMINI_API_KEY` | Google Gemini API key        |
-| `GITHUB_TOKEN`   | GitHub personal access token |
-
-### Frontend
-
-| Variable       | Description                |
-| -------------- | -------------------------- |
-| `VITE_API_URL` | URL of the FastAPI backend |
-
-For production:
-
-```env
-VITE_API_URL=https://gitsense-backend-gkjd.onrender.com
-```
+| Endpoint                           | Purpose              |
+| ---------------------------------- | -------------------- |
+| `GET /`                            | Backend status       |
+| `GET /health`                      | Health check         |
+| `GET /api/repository`              | Repository metadata  |
+| `GET /api/repository/tree`         | Repository structure |
+| `GET /api/repository/stats`        | Code statistics      |
+| `GET /api/repository/dependencies` | Dependency analysis  |
+| `GET /api/repository/activity`     | Development activity |
+| `GET /api/repository/health`       | Repository health    |
+| `GET /api/repository/advanced`     | Advanced analysis    |
+| `GET /api/repository/ai-summary`   | AI-generated summary |
+| `POST /api/repository/chat`        | AI repository chat   |
 
 ---
 
-## 🔄 How Repository Analysis Works
+## ☁️ Deployment
 
-When a user submits a GitHub repository:
-
-```text
-1. User enters GitHub URL
-          ↓
-2. GitSense validates the URL
-          ↓
-3. GitHub API retrieves repository metadata
-          ↓
-4. Repository tree is analyzed
-          ↓
-5. Source files are analyzed
-          ↓
-6. Languages and code statistics are calculated
-          ↓
-7. Dependencies are detected
-          ↓
-8. Recent activity is analyzed
-          ↓
-9. Repository health is calculated
-          ↓
-10. Results are displayed in the frontend
-```
-
-For AI-powered analysis:
+GitSense uses a separate frontend and backend architecture.
 
 ```text
-Repository Data
-      ↓
-Gemini
-      ↓
-Structured Technical Summary
+GitHub
+   │
+   ├── frontend/
+   │       ↓
+   │   Cloudflare Pages
+   │       ↓
+   │   gitsense.pages.dev
+   │
+   └── backend/
+           ↓
+        Render
+           ↓
+       FastAPI
 ```
 
-For repository chat:
+### Frontend
 
-```text
-User Question
-      ↓
-Repository Retrieval
-      ↓
-Relevant Source-Code Chunks
-      ↓
-Repository Context
-      ↓
-Gemini
-      ↓
-AI Answer
-```
+**Cloudflare Pages**
+
+### Backend
+
+**Render**
+
+### AI
+
+**Google Gemini**
 
 ---
 
 ## 🎯 Use Cases
 
-GitSense can be useful for:
+GitSense can be used for:
 
 * Understanding unfamiliar GitHub repositories
-* Quickly reviewing student projects
-* Onboarding developers to existing codebases
-* Preparing for technical interviews
+* Reviewing student projects
+* Developer onboarding
+* Technical interview preparation
 * Understanding open-source projects
 * Reviewing project architecture
 * Finding important source files
 * Understanding project dependencies
-* Getting AI-assisted explanations of codebases
-
----
-
-## 🔒 Current Limitations
-
-* Repository analysis currently targets public GitHub repositories.
-* Repository size is limited for RAG processing.
-* GitHub API rate limits apply.
-* Gemini API availability and usage limits apply.
-* Render's free instance may spin down after inactivity, which can make the first request slower.
-* RAG retrieval is optimized for lightweight deployment rather than large-scale semantic vector search.
+* AI-assisted codebase exploration
 
 ---
 
 ## 🔮 Future Improvements
-
-Potential improvements include:
 
 * Advanced semantic code search
 * Persistent vector database
@@ -590,19 +435,10 @@ Potential improvements include:
 * Commit-level code explanations
 * Dependency vulnerability analysis
 * Automated architecture diagrams
-* GitHub OAuth integration
+* GitHub OAuth
 * Improved caching
 * Production rate limiting
-* Custom domains
-* More advanced code intelligence
-
----
-
-## 📸 Demo
-
-Try GitSense with any public GitHub repository:
-
-### [🌐 Open GitSense](https://gitsense.pages.dev)
+* Custom domain support
 
 ---
 
@@ -612,24 +448,20 @@ Try GitSense with any public GitHub repository:
 
 Computer Science & Engineering
 
-GitHub: [@JayantaKundu17](https://github.com/JayantaKundu17)
+[GitHub](https://github.com/JayantaKundu17)
 
 ---
 
 ## ⭐ Support
 
-If you find GitSense useful, consider giving the repository a ⭐ on GitHub.
+If you find GitSense useful, consider giving the repository a ⭐.
 
+[🌐 Try GitSense](https://gitsense.pages.dev)
 [⭐ Star GitSense](https://github.com/JayantaKundu17/GitSense)
 
-````
+```
 
-### One recommendation
+After saving, GitHub should render it normally with **headings, bullets, tables, links, and diagrams**, rather than showing the Markdown as text.
 
-For your GitHub repository, I would put this exact line **immediately below the title** as well:
-
-```markdown
-> 🚀 **Live Demo:** [https://gitsense.pages.dev](https://gitsense.pages.dev)
-````
-
-That makes the deployed project immediately visible to recruiters or anyone opening the repository.
+Also, **you don't need to include the old "Absolutely. Here is..." sentence** — that was my message to you, not part of the README.
+```
