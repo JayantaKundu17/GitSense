@@ -1,8 +1,8 @@
 # GitSense
 
-> AI-powered GitHub repository intelligence and codebase analysis platform.
+AI-powered GitHub repository intelligence and codebase analysis platform.
 
-## 🚀 Demo :[https://gitsense.pages.dev](https://gitsense.pages.dev)
+## 🚀 Demo : [https://gitsense.pages.dev](https://gitsense.pages.dev)
 
 
 **GitHub Repository:** [github.com/JayantaKundu17/GitSense](https://github.com/JayantaKundu17/GitSense)
