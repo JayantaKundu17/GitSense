@@ -2,10 +2,33 @@
 
 AI-powered GitHub repository intelligence and codebase analysis platform.
 
-## 🚀 Demo : [https://gitsense.pages.dev](https://gitsense.pages.dev)
+##  Demo : [https://gitsense.pages.dev](https://gitsense.pages.dev)
+
+---
+
+## Screenshots
+
+<img width="1450" height="795" alt="Screenshot 2026-10-04 at 9 21 57 AM" src="https://github.com/user-attachments/assets/0bc4bfbf-0c11-4fad-9200-c7daa6229b5a" />
 
 
-**GitHub Repository:** [github.com/JayantaKundu17/GitSense](https://github.com/JayantaKundu17/GitSense)
+<img width="1442" height="793" alt="Screenshot 2026-10-04 at 9 24 19 AM" src="https://github.com/user-attachments/assets/f9339c01-e9fb-40a3-991c-3f689fde59b8" />
+
+
+<img width="1441" height="796" alt="Screenshot 2026-10-04 at 9 24 28 AM" src="https://github.com/user-attachments/assets/826819ea-96e0-447b-9518-78834f2fea85" />
+
+
+<img width="1446" height="798" alt="Screenshot 2026-10-04 at 9 24 34 AM" src="https://github.com/user-attachments/assets/c6fe7c18-14da-4693-bf95-37a9e7c833ea" />
+
+
+<img width="1444" height="794" alt="Screenshot 2026-10-04 at 9 24 41 AM" src="https://github.com/user-attachments/assets/fd87ac41-33a2-45d0-a89a-cd6eb92d0b3a" />
+
+
+<img width="1446" height="797" alt="Screenshot 2026-10-04 at 9 24 50 AM" src="https://github.com/user-attachments/assets/1df3b29d-e797-48be-b54d-1492a3634ffa" />
+
+
+<img width="1441" height="789" alt="Screenshot 2026-10-04 at 9 24 58 AM" src="https://github.com/user-attachments/assets/e7801fbf-ed1d-45db-a2dc-f4892f5f5888" />
+
+
 
 ---
 
